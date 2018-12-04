@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tP1_IDM:StateMachine
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tP1_IDM="http://www.example.org/tP1_IDM"
+    xsi:schemaLocation="http://www.example.org/tP1_IDM tP1_IDM.ecore">
+  <state name="On"
+      incomming="//@transition.0"
+      outgoing="//@transition.1"/>
+  <state name="Off"
+      incomming="//@transition.1"
+      outgoing="//@transition.0"/>
+  <transition
+      to="//@state.0"
+      from="//@state.1"
+      name="switch up"/>
+  <transition
+      to="//@state.1"
+      from="//@state.0"
+      name="switch down"/>
+</tP1_IDM:StateMachine>
