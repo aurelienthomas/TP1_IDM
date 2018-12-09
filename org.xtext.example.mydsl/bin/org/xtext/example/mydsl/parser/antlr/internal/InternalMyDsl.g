@@ -107,12 +107,34 @@ ruleStateMachine returns [EObject current=null]
 			)
 		)
 		(
+			otherlv_3='start'
+			{
+				newLeafNode(otherlv_3, grammarAccess.getStateMachineAccess().getStartKeyword_3_0());
+			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getStateMachineAccess().getStateStateParserRuleCall_3_0_0());
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getStateMachineRule());
+						}
 					}
-					lv_state_3_0=ruleState
+					{
+						newCompositeNode(grammarAccess.getStateMachineAccess().getStateStartStateCrossReference_3_1_0());
+					}
+					ruleEString
+					{
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStateMachineAccess().getStateStateParserRuleCall_4_0_0());
+					}
+					lv_state_5_0=ruleState
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getStateMachineRule());
@@ -120,7 +142,7 @@ ruleStateMachine returns [EObject current=null]
 						add(
 							$current,
 							"state",
-							lv_state_3_0,
+							lv_state_5_0,
 							"org.xtext.example.mydsl.MyDsl.State");
 						afterParserOrEnumRuleCall();
 					}
@@ -130,9 +152,9 @@ ruleStateMachine returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getStateMachineAccess().getTransitionTransitionParserRuleCall_3_1_0());
+						newCompositeNode(grammarAccess.getStateMachineAccess().getTransitionTransitionParserRuleCall_4_1_0());
 					}
-					lv_transition_4_0=ruleTransition
+					lv_transition_6_0=ruleTransition
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getStateMachineRule());
@@ -140,7 +162,7 @@ ruleStateMachine returns [EObject current=null]
 						add(
 							$current,
 							"transition",
-							lv_transition_4_0,
+							lv_transition_6_0,
 							"org.xtext.example.mydsl.MyDsl.Transition");
 						afterParserOrEnumRuleCall();
 					}

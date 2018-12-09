@@ -8,6 +8,7 @@ StateMachine returns StateMachine:
 	{StateMachine}
 	'StateMachine'
 	name=EString
+	('start' stateStart=[State|EString])?
 	(state+=State | transition+=Transition)*
 	;
 

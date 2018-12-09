@@ -9,6 +9,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 import tP1_IDM.StateMachine
 import tP1_IDM.State
+import tP1_IDM.Transition
 
 /**
  * Generates code from your model files on save.
@@ -19,30 +20,127 @@ class MyDslGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		fsa.generateFile("State.java",'''
-			package org.xtext.example.mydsl.generator;
-			
 			public abstract class State {
 				
 				private String name;
-				private Transition to;
-				private Transition from;
+				private Transition incomming;
+				private Transition outgoing;
+			}
+		''')
+		fsa.generateFile("Transition.java",'''
+			public abstract class Transition {
 				
-				public void State();
-				public void State(String name, Transtion to, Transtion from);
-				public void setName(String name);
-				public String getName();
+				private String name;
+				private State to;
+				private State from;
 			}
 		''')
 		var myfsm = resource.contents.get(0) as StateMachine
-		myfsm.state.forEach[s | fsa.generateFile(s.name+'.java', s.print)]
+		myfsm.state.forEach[s | fsa.generateFile(s.name+'.java', s.printState)]
+		myfsm.transition.forEach[t | fsa.generateFile(t.name+'.java', t.printTransition)]
+		fsa.generateFile("StateMachine.java",'''
+			import java.util.ArrayList;
+			import java.util.Scanner;
+			public class StateMachine {
+				
+				private State stateStart;
+				
+				public static void main(String[] args){
+					«myfsm.state.forEach[s | generateState(s)]»
+					«myfsm.transition.forEach[t | generateTransition(t)]»
+					«myfsm.state.forEach[s | generateLinkTransition(s)]»
+					this.stateStart = «myfsm.stateStart.name.toLowerCase()»;
+					System.out.println("Vous êtes actuellement sur l'état "+this.stateStart.getName());
+					Scanner keyboard = new Scanner(System.in);
+					System.out.println("Veuillez saisir un état ou Q pour quitter : ");
+					String str = clavier.nextLine();
+					while(str.equals("Q")){
+						System.out.println("Veuillez saisir un état ou Q pour quitter :");
+						str = clavier.nextLine();
+						if(str.equals(this.stateStart.getOutgoing().getTo().getName())){
+							this.stateStart = this.stateStart.getOutgoing().getTo();
+							System.out.println("Vous êtes actuellement sur l'état "+this.stateStart.getName());
+						}else{
+							System.out.println("Vous n'avez pas mentionné un nom d'état correct.");
+						}
+					}
+				}
+			}
+		''')
 	}
 	
-	def print(State s) {
+	def generateState(State s) {
+		return '''
+			«s.name» «s.name.toLowerCase()» = new «s.name»("«s.name»");
 		'''
-			package org.xtext.example.mydsl.generator;
-			
+	}
+	
+	def generateTransition(Transition t) {
+		return '''
+			«t.name» «t.name.toLowerCase()» = new «t.name»("«t.name»",«t.to»,«t.from»);
+		'''
+	}
+	
+	def  generateLinkTransition(State s) {
+		return '''
+			«s.name.toLowerCase».setIncomming(«s.incomming»);
+			«s.name.toLowerCase».setOutgoing(«s.outgoing»);
+		'''
+	}
+	
+	def printState(State s) {
+		'''
 			public class « s.name » extends State {
+				
+				public State(String name){
+					super.name = name;
+				}
+				
+				public String getName(){
+					return super.name;
+				}
+				
+				public void setIncomming(Transition t){
+					super.incomming = t;
+				}
+				
+				public Transition getIncomming(){
+					return super.incomming;
+				}
+				
+				public void setOutgoing(Transition t){
+					super.outgoing = t;
+				}
+				
+				public Transition getOutgoing(){
+					return super.outgoing;
+				}
 			}
+		'''
+	}
+	
+	def printTransition(Transition t){
+		'''
+		public class « t.name » extends Transition {
+						
+						public Transition(String name, State to, State from){
+							super.name = name;
+							super.to = to;
+							super.from = from;
+						}
+						
+						public String getName(){
+							return super.name;
+						}
+						
+						public Transition getTo(){
+							return super.to;
+						}
+						
+						public Transition getFrom(){
+							return super.from;
+						}
+					}
 		'''
 	}
 }
